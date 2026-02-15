@@ -9,3 +9,5 @@ venv/
 .vscode/
 
 *.log
+
+frontend/node_modules/

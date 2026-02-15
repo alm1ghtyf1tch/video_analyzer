@@ -1,0 +1,39 @@
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #05070c;
+  color: #e8eefc;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+input, select, textarea, button {
+  color: #e8eefc;
+  background: rgba(11, 18, 32, 0.90);
+  border: 1px solid rgba(34, 48, 68, 0.9);
+  border-radius: 10px;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(232, 238, 252, 0.55);
+}
+
+label {
+  color: rgba(232, 238, 252, 0.85);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+html, body { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }

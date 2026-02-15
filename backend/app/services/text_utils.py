@@ -2,6 +2,7 @@ import re
 from collections import Counter
 from app.services.stopwords import get_stopwords
 
+
 # words incl. Cyrillic/Kazakh letters + apostrophes + digits
 _WORD_RE = re.compile(r"[A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүІі0-9']+")
 _TS_ONLY_RE = re.compile(r"^\s*(\d{1,2}):(\d{2})(?::(\d{2}))?\s*$")  # mm:ss or hh:mm:ss
@@ -167,3 +168,44 @@ def fmt_mmss(seconds: float) -> str:
     m = s // 60
     s = s % 60
     return f"{m:02d}:{s:02d}"
+
+def captions_to_sentences(items: list[dict], max_gap_sec: float = 1.2, max_chars: int = 180) -> list[str]:
+    """
+    Deterministically group caption lines into sentence-like chunks using time gaps.
+    """
+    if not items:
+        return []
+
+    sents = []
+    buf = ""
+    prev_end = None
+
+    for it in items:
+        t = float(it.get("start", 0.0))
+        dur = float(it.get("duration", 0.0))
+        end = t + dur
+        line = (it.get("text") or "").strip()
+        if not line:
+            continue
+
+        gap = 0.0 if prev_end is None else (t - prev_end)
+        should_break = (gap > max_gap_sec) or (len(buf) >= max_chars)
+
+        if should_break and buf.strip():
+            sents.append(buf.strip())
+            buf = ""
+
+        buf += (" " if buf else "") + line
+        prev_end = end
+
+    if buf.strip():
+        sents.append(buf.strip())
+
+    # cleanup: add period if missing
+    cleaned = []
+    for s in sents:
+        s2 = s.strip()
+        if s2 and s2[-1] not in ".!?":
+            s2 += "."
+        cleaned.append(s2)
+    return cleaned

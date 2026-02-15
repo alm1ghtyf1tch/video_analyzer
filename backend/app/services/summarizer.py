@@ -1,5 +1,6 @@
 from collections import Counter
-from app.services.text_utils import split_sentences, tokenize_words, top_keywords, fmt_mmss, parse_timestamped_transcript
+from app.services.text_utils import split_sentences, tokenize_words, top_keywords, fmt_mmss, parse_timestamped_transcript, captions_to_sentences
+
 
 def _sentence_scores(sentences: list[str], language: str) -> list[float]:
     all_words = []
@@ -36,8 +37,11 @@ def _jaccard(a: set[str], b: set[str]) -> float:
     union = len(a | b)
     return inter / union if union else 0.0
 
-def summarize_extractive(text: str, language: str = "en", k: int = 7) -> dict:
-    sents = split_sentences(text)
+def summarize_extractive(text: str, language: str = "en", k: int = 7, yt_items: list[dict] | None = None) -> dict:
+    if yt_items is None:
+        yt_items = parse_timestamped_transcript(text)
+    sents = captions_to_sentences(yt_items) if yt_items else split_sentences(text)
+
     if not sents:
         return {"summary_text": "", "selected_sentences": [], "keywords": []}
 
@@ -65,10 +69,12 @@ def summarize_extractive(text: str, language: str = "en", k: int = 7) -> dict:
     kw = [w for (w, c) in top_keywords(text, language, k=12)]
 
     return {
-        "summary_text": " ".join(selected),
-        "selected_sentences": selected,
-        "keywords": kw
+    "summary_bullets": selected,     # best for UI
+    "summary_text": " ".join(selected),
+    "selected_sentences": selected,
+    "keywords": kw
     }
+
 
 def build_outline(text: str, language: str = "en", yt_items: list[dict] | None = None) -> dict:
     # if user pasted timestamps, parse them

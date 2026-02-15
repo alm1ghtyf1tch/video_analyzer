@@ -28,7 +28,8 @@ def summarize(req: SummarizeRequest):
     if not text:
         raise HTTPException(status_code=400, detail="Provide 'text' or 'youtube_url' with available captions.")
 
-    summary = summarize_extractive(text=text, language=req.language, k=req.summary_sentences)
+    summary = summarize_extractive(text=text, language=req.language, k=req.summary_sentences, yt_items=items)
+
     outline = build_outline(text=text, language=req.language, yt_items=items)
 
     return ApiResponse(ok=True, data={

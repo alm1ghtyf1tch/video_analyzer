@@ -11,6 +11,8 @@ _ACTION_HINTS_EN = ("should", "need to", "must", "let's", "we will", "do this", 
 _ACTION_HINTS_RU = ("нужно", "надо", "следует", "давайте", "мы будем", "сделайте", "убедитесь", "помните")
 _ACTION_HINTS_KK = ("керек", "қажет", "жасайық", "біз", "ұмытпа", "есіңізде")
 
+FORMULA_RE = re.compile(r"\b(theta|λ|lambda|intensity|I0|I)\b[^.\n]{0,80}", re.IGNORECASE)
+
 def _action_hints(lang: str):
     lang = (lang or "en").lower()
     if lang.startswith("ru"):
@@ -124,6 +126,7 @@ def analyze_transcript(text: str, language: str = "en", yt_items: list[dict] | N
             "reading_time_min": reading_time_min,
             "has_timestamps": has_timestamps
         },
+        "formula_snippets": extract_formula_snippets(text),
         "keywords": kws,
         "bigrams": bigrams,
         "keyphrases": phrases,
@@ -135,3 +138,13 @@ def analyze_transcript(text: str, language: str = "en", yt_items: list[dict] | N
             "label": sentiment_label
         }
     }
+
+def extract_formula_snippets(text: str, limit: int = 12) -> list[str]:
+    hits = []
+    for m in FORMULA_RE.finditer(text):
+        s = m.group(0).strip()
+        if len(s) >= 12 and s not in hits:
+            hits.append(s)
+        if len(hits) >= limit:
+            break
+    return hits

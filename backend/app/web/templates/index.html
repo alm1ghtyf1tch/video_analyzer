@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Video Analyzer (No AI)</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Video Analyzer (No AI)</h1>
+
+    <div class="card">
+      <label>YouTube URL (optional)</label>
+      <input id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." />
+
+      <label>Language</label>
+      <select id="language">
+        <option value="en">English</option>
+        <option value="ru">Русский</option>
+        <option value="kk">Қазақша</option>
+      </select>
+
+      <label>Summary sentences</label>
+      <input id="k" type="number" min="3" max="15" value="7" />
+
+      <label>Transcript text (paste here)</label>
+      <textarea id="text" rows="10" placeholder="Paste transcript here..."></textarea>
+
+      <div class="row">
+        <button id="btnSummarize">Summarize</button>
+        <button id="btnAnalyze">Analyze</button>
+        <button id="btnFetch">Fetch YouTube captions</button>
+      </div>
+
+      <p class="hint">This is deterministic: no models, no APIs, no keys.</p>
+    </div>
+
+    <div class="card">
+      <h2>Output</h2>
+      <pre id="output">Ready.</pre>
+    </div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
